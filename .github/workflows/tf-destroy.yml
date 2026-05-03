@@ -1,0 +1,58 @@
+name: "aws-ec2-toolbox-destroy"
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_destroy:
+        description: "Type 'destroy' to confirm destruction of all resources"
+        required: true
+      target_resource:
+        description: "Optional: specific resource to destroy (e.g. aws_instance.toolbox)"
+        required: false
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  tf-destroy:
+    name: "Terraform Destroy"
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm_destroy == 'destroy'
+    defaults:
+      run:
+        working-directory: ./terraform
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Destroy (targeted)
+        if: github.event.inputs.target_resource != ''
+        run: terraform destroy -auto-approve --var-file=./terraform-toolbox.tfvars -target=${{ github.event.inputs.target_resource }}
+
+      - name: Terraform Destroy (all)
+        if: github.event.inputs.target_resource == ''
+        run: terraform destroy -auto-approve --var-file=./terraform-toolbox.tfvars
+
+      - name: Destroy Summary
+        run: |
+          echo "## Destroy Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target:** ${{ github.event.inputs.target_resource || 'all resources' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(date -u)" >> $GITHUB_STEP_SUMMARY
