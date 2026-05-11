@@ -1,3 +1,8 @@
+output "ami_id" {
+  description = "Toolbox AMI used to launch this instance"
+  value       = data.aws_ami.toolbox.id
+}
+
 output "instance_id" {
   description = "EC2 instance ID"
   value       = aws_instance.toolbox.id
@@ -11,6 +16,11 @@ output "instance_arn" {
 output "private_ip" {
   description = "Private IP address of the toolbox instance"
   value       = aws_instance.toolbox.private_ip
+}
+
+output "public_ip" {
+  description = "Public IP address (only set when deployed to a public subnet)"
+  value       = aws_instance.toolbox.public_ip
 }
 
 output "availability_zone" {

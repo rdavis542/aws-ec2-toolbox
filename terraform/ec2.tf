@@ -1,10 +1,10 @@
 resource "aws_instance" "toolbox" {
-  ami                    = data.aws_ami.amazon_linux_2.id
-  instance_type          = var.instance_type
-  iam_instance_profile   = aws_iam_instance_profile.toolbox.name
-  subnet_id              = data.aws_subnet.private.id
-  vpc_security_group_ids = [aws_security_group.toolbox.id]
-  user_data              = local.user_data
+  ami                         = data.aws_ami.toolbox.id
+  instance_type               = var.instance_type
+  iam_instance_profile        = aws_iam_instance_profile.toolbox.name
+  subnet_id                   = data.aws_subnet.selected.id
+  vpc_security_group_ids      = [aws_security_group.toolbox.id]
+  associate_public_ip_address = var.associate_public_ip_address
 
   monitoring = true
 
@@ -22,5 +22,6 @@ resource "aws_instance" "toolbox" {
 
   tags = {
     Name = local.name
+    AMI  = data.aws_ami.toolbox.id
   }
 }

@@ -24,6 +24,12 @@ variable "vpc_name" {
 
 variable "subnet_name" {
   type        = string
-  description = "Name tag of the private subnet to deploy the instance into"
+  description = "Name tag of the subnet to deploy into (public or private)"
   default     = "private-subnet-a"
+}
+
+variable "associate_public_ip_address" {
+  type        = bool
+  description = "Assign a public IP to the instance. Set to true for public subnets, false for private (SSM via NAT)."
+  default     = false
 }

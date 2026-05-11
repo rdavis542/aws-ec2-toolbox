@@ -1,0 +1,66 @@
+name: Build Toolbox AMI
+
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: "AWS region to build the AMI in"
+        required: true
+        default: "us-east-1"
+      vpc_name:
+        description: "Name tag of the VPC for the build instance"
+        required: true
+        default: "vpc-east-1"
+      build_subnet_name:
+        description: "Name tag of the build subnet (must have internet access)"
+        required: true
+        default: "public-subnet-a"
+
+env:
+  AWS_REGION: ${{ github.event.inputs.region }}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-ami:
+    name: Packer Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_PACKER_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: "latest"
+
+      - name: Packer Init
+        working-directory: packer
+        run: packer init toolbox.pkr.hcl
+
+      - name: Packer Validate
+        working-directory: packer
+        run: |
+          packer validate \
+            -var "region=${{ github.event.inputs.region }}" \
+            -var "vpc_name=${{ github.event.inputs.vpc_name }}" \
+            -var "build_subnet_name=${{ github.event.inputs.build_subnet_name }}" \
+            toolbox.pkr.hcl
+
+      - name: Packer Build
+        working-directory: packer
+        run: |
+          packer build \
+            -var "region=${{ github.event.inputs.region }}" \
+            -var "vpc_name=${{ github.event.inputs.vpc_name }}" \
+            -var "build_subnet_name=${{ github.event.inputs.build_subnet_name }}" \
+            toolbox.pkr.hcl

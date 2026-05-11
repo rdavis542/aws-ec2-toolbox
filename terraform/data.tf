@@ -9,29 +9,24 @@ data "aws_vpc" "selected" {
   }
 }
 
-data "aws_subnet" "private" {
+data "aws_subnet" "selected" {
   filter {
     name   = "tag:Name"
     values = [var.subnet_name]
   }
 }
 
-data "aws_ami" "amazon_linux_2" {
+data "aws_ami" "toolbox" {
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["self"]
 
   filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-gp2"]
+    name   = "tag:Project"
+    values = ["aws-ec2-toolbox"]
   }
 
   filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
+    name   = "state"
+    values = ["available"]
   }
 }
