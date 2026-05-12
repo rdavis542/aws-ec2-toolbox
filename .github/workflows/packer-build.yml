@@ -18,6 +18,7 @@ on:
 
 env:
   AWS_REGION: ${{ github.event.inputs.region }}
+  PACKER_LOG: 1
 
 permissions:
   id-token: write

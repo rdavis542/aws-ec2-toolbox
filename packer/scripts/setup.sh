@@ -1,9 +1,8 @@
 #!/bin/bash
-set -euo pipefail
-exec > >(tee /var/log/toolbox-setup.log | logger -t toolbox-setup -s 2>/dev/console) 2>&1
+set -euxo pipefail
 
 echo "=== AWS Toolbox AMI Build Starting ==="
-echo "Base OS: $(cat /etc/os-release | grep PRETTY_NAME | cut -d= -f2)"
+echo "Base OS: $(grep PRETTY_NAME /etc/os-release | cut -d= -f2)"
 
 # System update
 dnf update -y
