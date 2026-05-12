@@ -11,7 +11,6 @@ dnf update -y
 # Note: AL2023 uses dnf; nload and telnet not in default repos, use socat/nc instead
 dnf install -y \
   jq \
-  curl \
   wget \
   git \
   vim \
