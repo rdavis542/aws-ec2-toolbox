@@ -73,10 +73,6 @@ source "amazon-ebs" "toolbox" {
 
   ssh_username = "ec2-user"
 
-  temporary_iam_instance_profile_policies = [
-    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  ]
-
   metadata_options {
     http_endpoint               = "enabled"
     http_tokens                 = "required"
