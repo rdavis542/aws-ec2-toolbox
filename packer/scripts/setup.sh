@@ -49,7 +49,8 @@ pip3 install --quiet boto3 requests
 # CloudWatch Agent
 dnf install -y amazon-cloudwatch-agent
 
-# SSM Agent is pre-installed on AL2023; ensure it's enabled
+# SSM Agent — install to register the service unit, then enable
+dnf install -y amazon-ssm-agent
 systemctl enable amazon-ssm-agent
 systemctl start amazon-ssm-agent
 
