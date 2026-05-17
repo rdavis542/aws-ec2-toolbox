@@ -54,7 +54,7 @@ source "amazon-ebs" "toolbox" {
   source_ami    = data.amazon-ami.al2023.id
 
   ami_name        = local.ami_name
-  ami_description = "AWS EC2 Toolbox — AL2023, AWS CLI v2, network diagnostics, troubleshooting aliases"
+  ami_description = "AWS EC2 Toolbox - AL2023, AWS CLI v2, network diagnostics, troubleshooting aliases"
 
   vpc_filter {
     filters = {
