@@ -49,8 +49,9 @@ pip3 install --quiet boto3 requests
 # CloudWatch Agent
 dnf install -y amazon-cloudwatch-agent
 
-# SSM Agent — install to register the service unit, then enable
+# SSM Agent — install, reload unit files, then enable
 dnf install -y amazon-ssm-agent
+systemctl daemon-reload
 systemctl enable amazon-ssm-agent
 systemctl start amazon-ssm-agent
 
